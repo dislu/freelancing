@@ -1,0 +1,43 @@
+---
+title: "HUDK4051: Prediction - Comparing Trees"
+author: "Charles Lang"
+date: "1/9/2018"
+output: html_document
+---
+
+In this assignment you will modelling student data using three flavors of tree algorithm: CART, C4.5 and C5.0. We will be using these algorithms to attempt to predict which students drop out of courses. Many universities have a problem with students over-enrolling in courses at the beginning of semester and then dropping most of them as the make decisions about which classes to attend. This makes it difficult to plan for the semester and allocate resources. However, schools don't want to restrict the choice of their students. One solution is to create predictions of which students are likley to drop out of which courses and use these predictions to inform semester planning. 
+
+In this assignment we will be using the tree algorithms to build models of which students are likely to drop out of which classes. 
+
+## Software
+
+In order to generate our models we will need several packages. The first package you should install is [caret](https://cran.r-project.org/web/packages/caret/index.html).
+
+There are many prediction packages available and they all have slightly different syntax. caret is a package that brings all the different algorithms under one hood using the same syntax. 
+
+We will also be accessing an algorithm from the [Weka suite](https://www.cs.waikato.ac.nz/~ml/weka/). Weka is a collection of machine learning algorithms that have been implemented in Java and made freely available by the University of Waikato in New Zealand. To access these algorithms you will need to first install both the [Java Runtime Environment (JRE) and Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/jre9-downloads-3848532.html) on your machine. You can then then install the [RWeka](https://cran.r-project.org/web/packages/RWeka/index.html) package within R.
+
+**Weka requires Java and Java causes problems. If you cannot install Java and make Weka work, please follow the alternative instructions at line 121**
+(Issue 1: failure to install RWeka/RWekajars, paste "sudo R CMD javareconf" into terminal and try to install again)
+
+The last package you will need is [C50](https://cran.r-project.org/web/packages/C50/index.html).
+
+## Data
+
+The data comes from a university registrar's office. The code book for the variables are available in the file code-book.txt. Examine the variables and their definitions.
+
+Upload the drop-out.csv data into R as a data frame. Pre-processing of data frame imported
+
+```{r}
+library(caret)
+# import csv data
+D1<- read.csv("/Users/arvind tomar/Documents/prediction-master/drop-out.csv",header = TRUE,sep=",")
+# check if the data has any missing values
+sum(is.na(D1))
+#Converting outcome variable complete to numeric
+D1$complete<-ifelse(D1$complete=="yes",1,0)
+
+D1$international<-ifelse(D1$international=="yes",1,0)
+D1$online <- ifelse(D1$online=="yes",1,0)
+
+```
