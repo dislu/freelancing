@@ -1,0 +1,17 @@
+
+Attaching package: 'gmailr'
+
+The following object is masked from 'package:utils':
+
+    history
+
+The following objects are masked from 'package:base':
+
+    body, date, labels, message
+
+Warning message:
+package 'gmailr' was built under R version 4.0.5 
+Error: Can't get Google credentials.
+Are you running gmailr in a non-interactive session? Consider:
+  * Call `gm_auth()` directly with all necessary specifics.
+Execution halted
