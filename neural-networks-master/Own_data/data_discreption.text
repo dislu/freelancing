@@ -1,0 +1,3 @@
+Classification problwm: Predict 5-Year Career Longevity for NBA Rookies
+y = 0 if career years played < 5
+y = 1 if career years played >= 5
