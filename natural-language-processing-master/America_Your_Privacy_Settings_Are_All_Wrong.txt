@@ -1,0 +1,40 @@
+Americans have become inured to the relentless collection of their personal information online. Imagine, for example, if getting your suit pressed at the dry cleaner's automatically and permanently signed you up to have scores of inferences about you — measurements, gender, race, language, fabric preferences, credit card type — shared with retailers, cleaning product advertisers and hundreds of other dry cleaners, who themselves had arrangements to share that data with others. It might give you pause.
+
+But that’s the daily reality on the internet. Every minute a person spends online helps countless companies build a thicker dossier about that person.
+
+Despite what corporations profess, much of this personal data is used not to improve products themselves, but to make those products more attractive to advertisers.
+
+One straightforward solution is to let people opt in to data collection on apps and websites. Today, with few exceptions, loads of personal data are collected automatically by default unless consumers take action to opt out of the practice — which, in most cases, requires dropping the service entirely.
+
+Virginia recently had the opportunity to extend firmer data protection rights to its residents. But the state’s Consumer Data Protection Act, signed into law this month, is a business-friendly package, supported by Amazon and Microsoft, that puts the onus on consumers to opt out of most data collection, except for the most sensitive personal details. Washington State lawmakers are advancing similar legislation.
+
+Corporations say opt-out provisions put control into the hands of consumers. But users are no more likely to switch off data collection than they are to read through the onerous and lengthy terms and conditions policies that litter the web. Many companies bury their data collection controls deep within their websites. Even if consumers can find them, their choices most likely don’t apply to a company’s subsidiaries or affiliates.
+
+Because of how personal data is shared, “there could be thousands or hundreds of thousands of companies that have data on you,” said Stacey Gray, senior counsel at the nonprofit Future of Privacy Forum. “Users, however, typically do not change their default settings even when it means their data is being collected.”
+
+It’s understandable, then, why companies want to preserve the status quo. Culling and distributing personally identifiable data is how web users are served up the lucrative ads that can seem distressingly relevant. However, consumers’ data is now so widely dispersed that security breaches can sweep up information about people who’ve never even visited certain websites.
+
+It should not be the role of consumers to make marketers’ jobs easier. Furthermore, there is evidence that such highly targeted advertising isn’t really necessary to support the free web, as technology companies that are against opt-in provisions often argue.
+
+Congress has not shown a willingness to curtail the power of the largest technology companies, which amassed record profits amid the pandemic, even as unemployment rates soared and cities placed limits on local commerce for months at a stretch.
+
+Without comprehensive federal privacy legislation, regulating the web has been left to states and companies. That’s led to a confusing jumble of laws and policies, which can be difficult for companies to comply with and for consumers to understand, and which privacy advocates say end up being far too business-friendly.
+
+Nor is simple consent alone enough. In fact, it can create more problems. Bombard someone long enough with consent requests and users will click “yes” to anything to make it stop. Opt-in rules need to be backed with strong enforcement, particularly around misleading or purposefully disruptive consent pop-ups that can dupe users into signing away their data.
+
+The recently approved California Privacy Rights Act bolstered existing law, but it, too, relies on an opt-out system for data collection. In Virginia, companies will need to get consent to track the most sensitive data, like location, religion and sexual orientation, but it is an opt-out system for everything else, including the sale of consumer data.
+
+The Washington State Senate just passed and sent to the State House a bill that lacks sufficient opt-in defaults. A 2019 Maine law requires internet service providers to get consumers’ consent before collecting, using or selling their data, while Nevada law provides only for users to halt its sale. Among the more stringent such laws is Illinois’s, but it applies only to biometric data, such as fingerprinting and facial recognition.
+
+Lawmakers in at least a dozen other states have proposed legislation addressing user privacy, almost entirely with rights provisions only to opt out of data collection.
+
+All of this is why federal legislation is so urgently needed. That should include provisions making personal data collection available only with consumers’ prior consent. (Some data is needed to ensure products are working properly.) The European Union’s General Data Protection Regulation, for instance, may provide some guidance over how to empower users to halt the dissemination of their data. If American consumers want more targeted advertising, or wish to freely share other personal data, they can choose to do so, rather than trust that companies have their best interests in mind.
+
+Lawmakers also ought to consider other consumer-focused measures, such as the right for people to easily request their data from companies and ask that personal information be deleted or not sold — similar to provisions in the California law. Allowing consumers to halt data collection from all companies at a point of entry to the internet, such as the browser, would limit annoying pop-ups and consent forms. Laws preventing websites from broadly disseminating personal consumer data to other websites also seem prudent.
+
+Later this year, Apple will begin requiring app makers to ask for permission to track users across other apps and websites, a welcome change. The revision has prompted a desperate ad campaign by Facebook, among the most exhaustive data gatherers, which has unconvincingly called it a threat to small businesses.
+
+With more people spending time at home, tied to devices that relentlessly track their every keystroke, click and streaming show selection, granting users some semblance of control over their own data is more urgent than ever.
+
+Congress has dithered for years without advancing legislation that will address Big Tech’s profound power disparity. If lawmakers wait until the next major data breach, it will be too late.
+
