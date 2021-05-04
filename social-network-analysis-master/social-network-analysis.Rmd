@@ -1,0 +1,345 @@
+---
+title: "HUDK4051: Social Network Analysis"
+author: "Charles Lang"
+date: "1/26/2018"
+output: html_document
+---
+
+In this assignment you will be generating and analyzing three social networks (also known as graphs or sociograms) based on three different measures. You will be using data from:
+
+Representing Classroom Social Structure. Melbourne: Victoria Institute of
+Secondary Education, M. Vickers and S. Chan, (1981)
+
+Available from the Index of Complex Networks ([ICON](https://icon.colorado.edu/#!/))
+
+The data were collected by Vickers & Chan from 29 seventh grade students in a school in Victoria, Australia. Students were asked to nominate their classmates on a number of relations including the following three "layers":  
+
+1. Who do you get on with in the class?  
+2. Who are your best friends in the class?  
+3. Who would you prefer to work with?  
+
+You have a data set for each of these questions, please complete the following tasks.
+
+## Data Wrangling
+
+Manipulate each of the data sets so that it is suitable for building a social network using iGraph.
+
+*If you have not previously taken HUDK4050 please sign up for office hours before you attempt this project*
+
+```{r}
+D1<-read.csv("/Users/arvind tomar/Documents/social-network-analysis-master/best.friends.csv", header = TRUE)
+D2<-read.csv("/Users/arvind tomar/Documents/social-network-analysis-master/get.on.with.csv", header = TRUE)
+D3<-read.csv("/Users/arvind tomar/Documents/social-network-analysis-master/work.with.csv",header = TRUE)
+#Since student ID is a number, R will automatically think it is an integer. We need to change the data type of the student id variable to factor. 
+
+D1$to <- as.factor(D1$to)
+D1$from<-as.factor(D1$from)
+D1$gender.from<-as.factor(D1$gender.from)
+D2$to <- as.factor(D2$to)
+D2$from<-as.factor(D2$from)
+D2$gender.from<-as.factor(D2$gender.from)
+D3$to <- as.factor(D3$to)
+D3$from<-as.factor(D3$from)
+D3$gender.from<-as.factor(D3$gender.from)
+
+```
+
+## Visualize the Networks
+
+Create a graph for each of the data sets, are the graphs directed or undirected? Visualize each of the graphs you have created and color the nodes according to gender. Save pdfs of your graphs in this directory for upload to Github.
+
+```{r}
+library(dplyr)
+library(igraph)
+Student_ID1<-unique(select(D1,"from","gender.from"))
+Student_ID2<-unique(select(D2,"from","gender.from"))
+Student_ID3<-unique(select(D3,"from","gender.from"))
+relations1<-select(D1,"from","to")
+relations2<-select(D2,"from","to")
+relations3<-select(D3,"from","to")
+Graph1<-graph_from_data_frame(relations1,directed = TRUE, vertices=Student_ID1)
+Graph2<-graph_from_data_frame(relations2,directed = TRUE, vertices = Student_ID2)
+Graph3<-graph_from_data_frame(relations3,directed = TRUE, vertices = Student_ID3)
+#plot graphs
+pdf(file="Graph1.pdf")
+plot(Graph1, vertex.color=Student_ID1$gender.from,edge.arrow.size=.2,edge.color="red")
+dev.off()
+pdf(file="Graph2.pdf")
+plot(Graph2, vertex.color=Student_ID2$gender.from,edge.arrow.size=.2,edge.color="red")
+dev.off()
+pdf(file="Graph3.pdf")
+plot(Graph3, vertex.color=Student_ID3$gender.from,edge.arrow.size=.2,edge.color="red")
+dev.off()
+```
+
+## Centrality Measures
+
+Who in the class has the highest degree centrality for each measure?
+#######################################################################################################################
+Student ID '8', '11' and '6' has the highest degree centrality for first, second and third social network respectively
+#######################################################################################################################
+```{r}
+# degree centrality: Nodes with more connections, have higher value of degree centrality
+#graph1
+print("Graph1")
+sort(degree(Graph1,loops = FALSE),decreasing = TRUE)
+#graph2
+print("Graph2")
+sort(degree(Graph2,loops = FALSE),decreasing = TRUE)
+#graph3
+print("Graph3")
+sort(degree(Graph3,loops = FALSE),decreasing = TRUE)
+
+```
+
+Does **degree centrality** mean the same thing for each of your networks? Does it make sense for each of your networks?
+##############################################################################################################################################################################################################################################################################################
+Degree centrality mean same for each of the network and student who have more connections in the graph of network, have higher degree of centrality. student '8' have higher degree centrality in all the three networks and student '11' have higher degree centrality in first two networks
+##############################################################################################################################################################################################################################################################################################
+Who in the class has the highest closeness centrality?
+###########################################################################################################
+Student '8', '11', and '6' has highest closeness centrality in first, second and third network respectively
+###########################################################################################################
+
+```{r}
+# closeness centrality: Nodes with lower total distance to all other nodes, have  higher closeness centrality
+# graph1
+print("Graph1")
+sort(closeness(Graph1),decreasing = TRUE)
+# graph2
+print("Graph2")
+sort(closeness(Graph2),decreasing = TRUE)
+#graph3
+print("Graph3")
+sort(closeness(Graph3),decreasing = TRUE)
+```
+
+How does **betweeness centrality** differ from degree centrality? Is one more useful than the other? Does their utility differ between your three networks?
+####################################################################################################################################################################################################################################################################################################################################################################################################################################
+Betweeness centrality is a measure of importance of the node in connecting other nodes whereas a node with higher connections, have higher degree centrality. Both the measures serves different purpose in social network analysis and can't be compared. student '26', '11' and '11' have highest Betweeness in first, second and third network respectively. Betweeness and degree centrality is different for different networks 
+#####################################################################################################################################################################################################################################################################################################################################################################################################################################
+```{r}
+# Betweenness centrality: Betweenness centrality quantifies the number of times a node acts as a bridge along the shortest path between two other nodes. The vertices that have a high probability to occur on a randomly chosen shortest path between two randomly chosen vertices have a high betweenness
+#graph1
+print("Graph1")
+sort(betweenness(Graph1),decreasing = TRUE)
+#graph2
+print("Graph2")
+sort(betweenness(Graph2),decreasing = TRUE)
+#graph3
+print("Graph3")
+sort(betweenness(Graph3),decreasing = TRUE)
+
+```
+## Simple structures
+
+Count the number of dyads and the number and type of triads using the following commands.
+#####################################################################################
+
+mut:
+The number of pairs with mutual connections.
+
+asym:	
+The number of pairs with non-mutual connections.
+
+null:	
+The number of pairs with no connection between them
+###################################################################################
+```{r}
+print("Graph1")
+dyad_census(Graph1)
+print("Graph2")
+dyad_census(Graph2)
+print("Graph3")
+dyad_census(Graph3)
+```
+[Documentation](http://igraph.org/r/doc/dyad_census.html)
+#######################################################################################################
+#In triad_census output, every triple of vertices (A, B, C) are classified into the 16 possible states:
+003
+A,B,C, the empty graph.
+
+012
+A->B, C, the graph with a single directed edge.
+
+102
+A<->B, C, the graph with a mutual connection between two vertices.
+
+021D
+A<-B->C, the out-star.
+
+021U
+A->B<-C, the in-star.
+
+021C
+A->B->C, directed line.
+
+111D
+A<->B<-C.
+
+111U
+A<->B->C.
+
+030T
+A->B<-C, A->C.
+
+030C
+A<-B<-C, A->C.
+
+201
+A<->B<->C.
+
+120D
+A<-B->C, A<->C.
+
+120U
+A->B<-C, A<->C.
+
+120C
+A->B->C, A<->C.
+
+210
+A->B<->C, A<->C.
+
+300
+A<->B<->C, A<->C, the complete graph
+#####################################################################################################
+```{r}
+print("Graph1")
+triad_census(Graph1)
+print("Graph2")
+triad_census(Graph2)
+print("Graph3")
+triad_census(Graph3)
+```
+[Documentation](http://igraph.org/r/doc/triad_census.html)
+
+Do these metrics tell you anything about the networks? If so what?
+########################################################################################################################################################################################################################################################################################################################
+Dyads tells about reciprocated ties among nodes in graph, these ties may indicate about the degree of cohesion, trust, and social capital that is present.
+first network have 55 mut relationships, second one have 121 mut and third one have 46. second network has highest number 192 complete graphs in triad and third network has lowest 37 complete graphs. Thus, Second network has highest degree of cohesion, trust, and social capital whereas network three has lowest.
+########################################################################################################################################################################################################################################################################################################################
+
+## Cliques
+
+Answer the following questions using the [clique functions](http://igraph.org/r/doc/cliques.html)
+
+What is the size of the largest clique(s) in each of the three networks?
+####################################################
+Size of the largest cliques are following:
+Graph1:
+7
+Graph2:
+12
+Graph3:
+9
+####################################################
+
+```{r}
+#clique_num calculates the size of the largest clique(s)
+print("Graph1")
+clique_num(Graph1)
+print("Graph2")
+clique_num(Graph2)
+print("Graph3")
+clique_num(Graph3)
+```
+
+Which nodes/vertices are in the largest cliques for the three networks? Is there much overlap?
+#######################################################################################################################################################################################################################
+In network one there are 5 largest cliques of size 7, network two has 4 largest cliques of size 12 and network three has 3 largest cliques of size 9. there is overlap among largest cliques in all the three networks.
+#######################################################################################################################################################################################################################
+```{r}
+#largest_cliques finds all largest cliques in the input graph. A clique is largest if there is no other clique including more vertices.
+print("Graph1")
+largest_cliques(Graph1)
+print("Graph2")
+largest_cliques(Graph2)
+print("Graph3")
+largest_cliques(Graph3)
+```
+
+How many **maximal cliques** are there in each of the networks?
+####################################################
+Maximal cliques are followings:
+Graph1:
+35
+Graph2:
+64
+Graph3:
+36
+####################################################
+```{r}
+#max_cliques finds all maximal cliques in the input graph. A clique in maximal if it cannot be extended to a larger clique. The largest cliques are always maximal, but a maximal clique is not neccessarily the largest
+#count_max_cliques counts the maximal cliques
+print("Graph1")
+count_max_cliques(Graph1)
+print("Graph2")
+count_max_cliques(Graph2)
+print("Graph3")
+count_max_cliques(Graph3)
+```
+
+## Components & Cutpoints
+
+Find the cutpoints (articulation points) for each of the three networks you generated. What does this tell you about the graphs? Does what you find match a visual exploration of the networks?
+#################################################################################################################################################################################################################################################################################################################################################################
+A vertex in an undirected connected graph is an articulation point (or cut vertex) if and only if removing it (and edges through it) disconnects the graph.Articulation points represent vulnerabilities in a connected network – single points whose failure would split the network into 2 or more components. They are useful for designing reliable networks.
+
+In network one and three, there are only one cut vertex with student id 13 and network two has no cut vertex
+##################################################################################################################################################################################################################################################################################################################################################################
+```{r}
+print("Graph1")
+articulation_points(Graph1)
+print("Graph2")
+articulation_points(Graph2)
+print("Graph3")
+articulation_points(Graph3)
+```
+## Putting it all together
+
+Write a narrative description of the social ties among members of this 7th grade class using the network, centrality and structural metrics you have developed. Can you provide any recommendations to the teacher of this class based on your analysis? What other information would you want to know? Can you remember being in seventh grade, does this reflect your experience?
+##########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+from the visualization of networks, we can see that male students are largely connected to male and female students to female. Network analysis suggests that students have different choices for making friend and doing work with and there is lowest mutual connections among students in network 'work.with' which tells that students have trust issues while working in a team. Students '6', '11', and '8' have highest degree of centrality and closeness, these students can be given some kind of responsibilities like monitor of class to run the affairs of the class smoothly. Being a male student, I remember when I was in seventh grade, I used to connect with male students easily and there were some students in class everybody wants to work with. 
+##########################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################################
+## Test out your skills
+
+Find another data set that interests you on the ([ICON](https://icon.colorado.edu/#!/)) website. Load the data into igraph, visualize the graph and use one of the metrics you have learned to characterize structures within the graph.
+#folder = Python-dependency-network
+```{r}
+library(dplyr)
+library(igraph)
+D<-read.csv("/Users/arvind tomar/Documents/social-network-analysis-master/Python-dependency-network/requirements.csv", header = TRUE)
+D$package <- as.factor(D$package)
+D$requirement<-as.factor(D$requirement)
+D$package_name<-as.factor(D$package_name)
+D$package_version<-as.factor(D$package_version)
+D[D=='']<-NA
+Dc<-D[complete.cases(D),]
+
+
+library(dplyr)
+library(igraph)
+
+V.FROM <- select(Dc, "package","package_name", "package_version")
+#Now we will separate the commentees from our commenters
+V.TO <- select(Dc, "requirement", "package_name", "package_version")
+#Make sure that the from and to data frames have the same variables names
+names(V.FROM) <- c("package", "package_name", "package_version")
+names(V.TO) <- c("requirement", "package_name", "package_version")
+
+lvls <- sort(union(levels(V.FROM$package), levels(V.TO$requirement)))
+
+
+Graph<-graph_from_data_frame(Dc,directed = TRUE, vertices=lvls)
+
+# We can't visualize the network as number of nodes in network is very large
+Python_centrality<-sort(degree(Graph,loops = FALSE),decreasing = TRUE)
+Python_closeness<-sort(closeness(Graph),decreasing = TRUE)
+print(Python_centrality[1:5])
+Python_betweenness<-sort(betweenness(Graph),decreasing = TRUE)
+print(Python_betweenness[1:5])
+```
+################################################################################################################################################################################################################################################################################################
+All the python packages have zero probability of betweenness, it mean no python package work as bridge between other python packages. Packages, requests, distribute, django,six and pyyaml have highest degree of centrality, mean they are highly connected packages to other python packages
+################################################################################################################################################################################################################################################################################################
