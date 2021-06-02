@@ -41,3 +41,214 @@ D1$international<-ifelse(D1$international=="yes",1,0)
 D1$online <- ifelse(D1$online=="yes",1,0)
 
 ```
+
+The next step is to separate your data set into a training set and a test set. Randomly select 25% of the students to be the test data set and leave the remaining 75% for your training data set. (Hint: each row represents an answer, not a single student.)
+
+```{r}
+traindata<-createDataPartition(
+  y=D1$complete # the outcome data are needed
+  ,p=0.75 # The percentage of data in training set
+  ,list=FALSE)
+
+#Generates a list of index numbers for the sample
+training<-D1[traindata,]
+testing<- D1[-traindata,]
+TRAIN <- training[,c(2:10)] #Remove the student_id variable that we do not want to use in the model
+```
+
+For this assignment you will be predicting the student level variable "complete". 
+(Hint: make sure you understand the increments of each of your chosen variables, this will impact your tree construction)
+
+Visualize the relationships between your chosen variables as a scatterplot matrix.  Save your image as a .pdf named scatterplot_matrix.pdf. Based on this visualization do you see any patterns of interest? Why or why not?
+
+```{r}
+
+pdf(file="scatter_matix.pdf")
+pairs(D1)
+dev.off()
+
+```
+
+############################################
+#interpretation:From the scatter plot matrix, we can see, there is a relationship between the variables "years" and "complete". Mostly, students who have spent less time in the program, have completed the course. It indicates that time spent by a student in a course is negatively correlated with completion of the course by that student. There seems to be a relationship between the variables "entrance_test_score" and "courses_taken". "entrance_test_score" and "courses_taken" are negatively correlated. Students having enrolled in less courses have higher "entrance_test_score".  Moreover, there is a relationship between the variables "complete" and "entrance_test_score". Students with higher entrance exam test score mostly complete the program. International students takes fewer courses than non-international and students, who takes only online courses, spend fewer years in the program. 
+###################################################
+
+## CART Trees
+
+You will use the [rpart package](https://cran.r-project.org/web/packages/rpart/rpart.pdf) to generate CART tree models.
+
+Construct a classification tree that predicts complete using the caret package.
+
+```{r}
+library(caret)
+
+TRAIN <- training[,c(2:10)] #Remove the student_id variable that we do not want to use in the model
+
+#caret does not summarize the metrics we want by default so we have to modify the output
+MySummary  <- function(data, lev = NULL, model = NULL){
+  df <- defaultSummary(data, lev, model)
+  tc <- twoClassSummary(data, lev, model)
+  pr <- prSummary(data, lev, model)
+  out <- c(df,tc,pr)
+  out
+     }
+
+#Define the control elements we would like to use
+
+ctrl <- trainControl(method = "repeatedcv", #Tell caret to perform k-fold cross validation
+                repeats = 3, #Tell caret to repeat each fold three times
+                classProbs = TRUE, #Calculate class probabilities
+                summaryFunction = MySummary)
+#create outcome variable as factor
+TRAIN$complete<-ifelse(TRAIN$complete==1,"yes","no")
+TRAIN$complete<-factor(TRAIN$complete )
+#TRAIN$complete<-relevel(TRAIN$complete,"yes")
+#Define the model
+set.seed(1)
+cartFit <- train(complete ~ ., #Define which variable to predict 
+                data = TRAIN, #Define the data set to train the model on
+                trControl = ctrl, #Tell caret the control elements
+                method = "rpart", #Define the model type
+                metric = "Accuracy", #Final model choice is made according to sensitivity
+                preProc = c("center", "scale")) #Center and scale the data to minimize the 
+
+#Check the results
+cartFit
+
+
+```
+
+Describe important model attribues of your tree. Do you believe it is a successful model of student performance, why/why not?
+
+##########################################
+#Interpretation: The final value of cp for this model is 0.011 and the corresponding value of ROC is 0.8963. This indicates that there is a 89.63% probability of a randomly selected student from a "completed" group being classified as "completed" which is very good. The specificity (True negative or TN) of the model is 0.9954. This tells that the rate of a correct classification of students who have not completed a course is 99.54%. Here, the sensitivity (Ture positive or TP) of the model is 0.6584. This suggests that the rate of a correct classification of students who completed a course is only 65.84%. It means that some of the students, who completed their course,is incorrectly classified as "not completed". From this, it can be said that the model of student performance isn't that much successful. 
+####################################################
+
+Can you use the sensitivity and specificity metrics to calculate the F1 metric?
+####################################################
+# No, we can't calculate F1 metric from sensitivity and specificity metrics. We necessarily need precision metric to calculate F1 metric
+####################################################
+
+Now predict results from the test data and describe important attributes of this test. Do you believe it is a successful model of student performance, why/why not?
+
+####################################################
+# The overall accuracy of the model is 0.8942 or 89.49%, which is significant. The value of the specificity is 0.9971, it means that the rate of a successful prediction of students who completed a course is 99.62% which is high. However, the value of sensitivity is 0.6359 which tells the rate of a successful prediction of students who have completed a course is only 63.59%. This implies that our model needs some improvement. 
+####################################################
+```{r}
+TEST <- testing[,c(2:10)] #Remove the student_id variable that we do not want to use in the model
+TEST$complete<-ifelse(TEST$complete==1,"yes","no")
+#TEST$complete<-factor(TEST$complete )
+#Generate prediction using previously trained model
+cartClasses <- predict(cartFit, newdata = TEST)
+
+#Generate model statistics
+confusionMatrix(data = cartClasses, factor(TEST$complete))
+
+```
+
+## Conditional Inference Trees
+
+Train a Conditional Inference Tree using the `party` package on the same training data and examine your results.
+
+
+```{r}
+library(party)
+TRAIN$complete<-ifelse(training$complete==0,"no","yes")
+TRAIN$complete<-factor(TRAIN$complete)
+condFit <- train(complete ~.,#Define which variable to predict 
+                 data=TRAIN, #define the data for training
+                 trControl=ctrl, # tell caret the control element  
+                 method = "ctree", #Define the model type             
+              
+                # metric = "Spec", #Final model choice is made according to sensitivity
+                preProc = c("center", "scale")
+                ) #Center and scale the data to minimize the
+                 
+condFit
+plot(condFit)
+plot(condFit$finalModel)
+condFit$finalModel
+table(predict(condFit),TRAIN$complete)
+
+```
+Describe important model attribues of your tree. Do you believe it is a successful model of student performance, why/why not?
+
+####################################################
+# Accuracy is used to select the optimal model using the largest value. The final value used for the model was mincriterion = 0.99.The ROC value of this model is 0.9036,which is an outstanding value. The ROC value for this model is higher than that of the CART model.The sensitivity and Specificity values are almost same to CART model. This model look better than the CART model
+####################################################
+
+What does the plot represent? What information does this plot tell us?
+####################################################
+#Interpretation: The plot tells that the optimal confidence threshold is 0.5 with a minimum of 3 instances or splits per leaf as it has the highest accuracy values compared to a minimum of 2 instances per leaf and one instance per leaf. 
+####################################################
+
+Now test your new Conditional Inference model by predicting the test data and generating model fit statistics.
+```{r}
+TEST <- testing[,c(2:10)] #Remove the student_id variable that we do not want to use in the model
+TEST$complete<-ifelse(TEST$complete==1,"yes","no")
+#TEST$complete<-factor(TEST$complete )
+#Generate prediction using previously trained model
+condClasses <- predict(condFit, newdata = TEST)
+
+#Generate model statistics
+confusionMatrix(data = condClasses, factor(TEST$complete))
+```
+
+There is an updated version of the C4.5 model called C5.0, it is implemented in the C50 package. What improvements have been made to the newer version? 
+####################################################
+# It is improved than C4.5 on the speed, memory and the efficiency. C5.0 model works by splitting training data that provide the maximum weight. C5.0 can easily handled the multivalue attribute and missing attribute. C5.0 algortihm automatically winnows the data features before constructing a classifier. it provides both rule and tree model types.
+####################################################
+Install the C50 package, train and then test the C5.0 model on the same data.
+
+```{r}
+library(C50)
+#c50Fit <- C5.0(x=TRAIN[,-4],y=TRAIN$complete)
+#c50Fit
+#summary(c50Fit)
+c50Fit <- train(complete ~ .,
+                data = TRAIN,
+                trControl = ctrl,
+                method = "C5.0",
+                metric = "ROC",
+                preProc = c("center", "scale"))
+c50Fit
+plot(c50Fit)
+```
+
+```{r}
+TEST <- testing[,c(2:10)] #Remove the student_id variable that we do not want to use in the model
+TEST$complete<-ifelse(TEST$complete==1,"yes","no")
+#TEST$complete<-factor(TEST$complete )
+#Generate prediction using previously trained model
+c50Classes <- predict(c50Fit, newdata = TEST)
+
+#Generate model statistics
+confusionMatrix(data = c50Classes, factor(TEST$complete))
+```
+
+
+## Compare the models
+#condnif = condFit,
+caret allows us to compare all three models at once.
+
+```{r}
+resamps <- resamples(list(cart = cartFit, condinf=condFit, cfiveo = c50Fit))
+summary(resamps)
+```
+
+What does the model summary tell us? Which model do you believe is the best?
+####################################################
+#The model summary displays descriptive statistics of the metrics ROC, sensitivity, and specificity for each of the models.It compares the three models based on the distribution of the values of ROC, sensitivity, and specificity. Based on the model summary, C5.0 model has the highest average ROC, and  average sensitivity, and the Conditional inference tree model has the highest average specificity. Furthermore, the CART model has the lowest average ROC and sensiitvity. Variation in the sensitivity and specificity is less in C5.0 model, compared to the other two models. Thus, the C5.0 model is the best in predicting whether students will complete the course.
+####################################################
+Which variables (features) within your chosen model are important, do these features provide insights that may be useful in solving the problem of students dropping out of courses?
+
+```{r}
+Var_Impo<-varImp(c50Fit)
+plot(Var_Impo)
+roc_imp <- filterVarImp(x = training[, -5], y = training$complete)
+plot(roc_imp)
+```
+
+####################################################
+# Based on the Var_impo,roc_imp plot and scatter plot matrix, we can say that variable "year" has greatest importance in predicting whether the student will complete the course or dropout.
+####################################################
